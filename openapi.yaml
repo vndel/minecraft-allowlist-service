@@ -1,0 +1,40 @@
+openapi: 3.1.0
+info:
+  title: Minecraft Allowlist Service
+  version: 1.0.0
+paths:
+  /v1/allowlist/{uuid}:
+    parameters:
+      - name: uuid
+        in: path
+        required: true
+        schema: { type: string, format: uuid }
+    get:
+      summary: Read allowlist decision
+      responses:
+        '200':
+          description: Current decision and revision
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [allowed, revision]
+                properties:
+                  allowed: { type: boolean }
+                  revision: { type: integer, minimum: 0 }
+        '404': { description: No explicit entry }
+    put:
+      summary: Set allowlist decision
+      security: [{ bearerAuth: [] }]
+      responses:
+        '204': { description: Updated }
+    delete:
+      summary: Remove explicit decision
+      security: [{ bearerAuth: [] }]
+      responses:
+        '204': { description: Removed or already absent }
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
